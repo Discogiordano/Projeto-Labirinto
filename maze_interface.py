@@ -36,7 +36,12 @@ class MazeApp:
         """
         for y, row in enumerate(self.maze):
             for x, cell in enumerate(row):
-                color = "black" if cell == 1 else "white"  # Preto para paredes, branco para caminhos
+                if cell == 1:
+                    color = "black"  # Preto para paredes
+                elif (x, y) == (len(self.maze[0]) - 2, len(self.maze) - 2):
+                    color = "red"  # Vermelho para linha de chegada
+                else:
+                    color = "white"  # Branco para caminhos
                 self.canvas.create_rectangle(
                     x * self.cell_size, y * self.cell_size,
                     (x + 1) * self.cell_size, (y + 1) * self.cell_size,

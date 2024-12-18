@@ -16,3 +16,6 @@ def generate_maze(width, height):
     maze[1][1] = 0
     carve_passages(1, 1)
     return maze
+
+#Gera aleatoriedade
+random.seed()

@@ -1,61 +1,43 @@
-import tkinter as tk  # Importa Tkinter para a interface gráfica
+import tkinter as tk
+from amostragem_utils import load_amostragem
+from learning_agent import LearningAgent
 
 class MazeApp:
-    def __init__(self, root, maze, path):
+    def __init__(self, root, maze):
         """
-        Inicializa a interface gráfica do labirinto e movimentação do agente.
+        Inicializa a interface gráfica com o agente DFS.
         """
         self.root = root
         self.maze = maze
-        self.path = path
-        self.cell_size = 10  # Define o tamanho de cada célula
+        self.cell_size = 20
         self.canvas = tk.Canvas(
             root, 
             width=len(maze[0]) * self.cell_size, 
             height=len(maze) * self.cell_size
         )
         self.canvas.pack()
-        self.agent_position = path[0]  # Posição inicial do agente
-        self.draw_maze()  # Desenha o labirinto na interface
-        self.draw_finish_line()  # Marca a célula de chegada
-        self.move_agent()  # Inicia o movimento do agente
+
+        # Carrega a amostragem
+        self.amostragem = load_amostragem()
+
+        # Inicializa o agente
+        self.agent = LearningAgent(self.canvas, self.cell_size, (1, 1), maze, self.amostragem)
+        self.draw_maze()
+        self.agent.draw()
+
+        # Inicia o DFS
+        if not self.agent.dfs():
+            print("Execução finalizada sem sucesso.")
 
     def draw_maze(self):
         """
-        Desenha o labirinto na tela.
+        Desenha o labirinto na interface gráfica.
         """
         for y, row in enumerate(self.maze):
             for x, cell in enumerate(row):
-                color = "black" if cell == 1 else "white"  # Define cor (parede ou caminho)
+                color = "black" if cell == 1 else "white"
                 self.canvas.create_rectangle(
                     x * self.cell_size, y * self.cell_size,
                     (x + 1) * self.cell_size, (y + 1) * self.cell_size,
                     fill=color, outline="gray"
                 )
-
-    def draw_finish_line(self):
-        """
-        Marca a célula de linha de chegada com a cor vermelha.
-        """
-        end_x, end_y = self.path[-1]  # Obtém as coordenadas da célula final
-        self.canvas.create_rectangle(
-            end_x * self.cell_size, end_y * self.cell_size,
-            (end_x + 1) * self.cell_size, (end_y + 1) * self.cell_size,
-            fill="red", outline="gray"
-        )
-
-    def move_agent(self):
-        """
-        Move o agente ao longo do caminho encontrado.
-        """
-        for position in self.path:
-            x, y = position
-            # Desenha o agente na nova posição
-            self.canvas.create_rectangle(
-                x * self.cell_size, y * self.cell_size,
-                (x + 1) * self.cell_size, (y + 1) * self.cell_size,
-                fill="blue", outline="gray"
-            )
-            self.root.update()  # Atualiza a interface
-            self.root.after(100)  # Pausa para criar a animação
-        print("O agente chegou ao final do labirinto!")

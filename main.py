@@ -1,22 +1,26 @@
-from maze_interface import MazeApp  # Importa a interface gráfica
-from maze_generator import generate_maze  # Importa a função para gerar o labirinto
-from maze_solver import solve_maze  # Importa a função para resolver o labirinto
-import tkinter as tk  # Importa Tkinter para criar a interface gráfica
+from maze_generator import generate_maze
+from maze_interface import MazeApp
+from labirinto_utils import load_labirinto, save_labirinto
+import tkinter as tk
 
 def main():
     """
-    Função principal para integrar e executar o programa.
+    Função principal para executar o programa.
     """
-    width, height = 61, 61 # Grandes dimensões do labirinto
-    maze = generate_maze(width, height)  # Gera o labirinto
-    path = solve_maze(maze)  # Resolve o labirinto e encontra o caminho
+    width, height = 21, 21  # Dimensões do labirinto
 
-    # Inicializa a janela Tkinter
+    # Tenta carregar o labirinto salvo
+    maze = load_labirinto()
+    if maze is None:
+        print("Gerando novo labirinto fixo...")
+        maze = generate_maze(width, height)
+        save_labirinto(maze)  # Salva o labirinto para futuras execuções
+
+    # Inicializa a interface gráfica
     root = tk.Tk()
-    root.title("Labirinto - Interface Gráfica")
-    # Cria a interface gráfica do labirinto
-    app = MazeApp(root, maze, path)
-    root.mainloop()  # Executa o loop principal da interface gráfica
+    root.title("Labirinto - Agente com Aprendizado")
+    app = MazeApp(root, maze)
+    root.mainloop()
 
 if __name__ == "__main__":
-    main()  # Executa a função principal
+    main()

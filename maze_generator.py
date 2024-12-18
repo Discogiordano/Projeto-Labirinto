@@ -1,6 +1,9 @@
 import random
 
 def generate_maze(width, height):
+    """
+    Gera um labirinto usando busca em profundidade recursiva.
+    """
     maze = [[1 for _ in range(width)] for _ in range(height)]
 
     def carve_passages(cx, cy):

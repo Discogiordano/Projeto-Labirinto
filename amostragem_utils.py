@@ -3,6 +3,7 @@ import json
 def load_amostragem(file_path="amostragem.json"):
     """
     Carrega o arquivo de amostragem contendo os dados do labirinto.
+    Se o arquivo não existir, retorna uma estrutura inicial vazia.
     """
     try:
         with open(file_path, "r") as file:

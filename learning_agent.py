@@ -1,94 +1,135 @@
-from amostragem_utils import save_amostragem
+from amostragem_utils import save_amostragem, load_amostragem
 
 class LearningAgent:
-    def __init__(self, canvas, cell_size, start, maze, amostragem):
+    def __init__(self, canvas, cell_size, start, maze):
         """
-        Inicializa o agente com lógica DFS.
+        Inicializa o agente com lógica DFS e aprendizado usando amostragem.json.
         """
         self.canvas = canvas
         self.cell_size = cell_size
         self.start = start  # Posição inicial do agente
-        self.position = start
         self.maze = maze
-        self.amostragem = amostragem  # Dados persistentes de amostragem
+        self.amostragem = load_amostragem()  # Carrega a amostragem do arquivo
         self.visited = set()  # Células visitadas nesta execução
-        self.visual = None  # Representação gráfica do agente
         self.directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Movimentos possíveis
-
-    def draw(self):
-        """
-        Desenha o agente na posição inicial.
-        """
-        x, y = self.position
-        self.visual = self.canvas.create_rectangle(
-            x * self.cell_size, y * self.cell_size,
-            (x + 1) * self.cell_size, (y + 1) * self.cell_size,
-            fill="blue", outline="gray"
-        )
+        self.agent_visual = None  # Representação gráfica do agente
 
     def dfs(self):
         """
-        Implementa a lógica de DFS para o agente explorar o labirinto.
-        Retorna True se encontrar a linha de chegada, ou False se falhar.
+        Implementa a lógica de DFS com aprendizado baseado na tabela amostragem.json.
         """
-        stack = [self.start]  # Inicializa a pilha com a posição inicial
-        path = []  # Caminho atual
+        stack = [self.start]  # Pilha para DFS
 
         while stack:
-            cx, cy = stack[-1]  # Pega a célula no topo da pilha sem removê-la
-            path.append((cx, cy))
+            state = stack[-1]  # Pega o estado atual no topo da pilha
 
-            # Verifica se a célula já foi visitada na execução atual
-            if (cx, cy) in self.visited:
-                print(f"Repetiu a célula {cx, cy} na mesma execução. Finalizando.")
-                self.amostragem["errors"].append({"path": path, "reason": "Repeated cell"})
-                save_amostragem(self.amostragem)
-                return False
-            self.visited.add((cx, cy))  # Marca a célula como visitada na execução atual
-
-            # Atualiza a amostragem global (para execuções futuras)
-            cell_str = str((cx, cy))
-            self.amostragem["visited"][cell_str] = self.amostragem["visited"].get(cell_str, 0) + 1
-
-            # Desenha o agente na posição atual
-            self.canvas.create_rectangle(
-                cx * self.cell_size, cy * self.cell_size,
-                (cx + 1) * self.cell_size, (cy + 1) * self.cell_size,
-                fill="blue", outline="gray"
-            )
-            self.canvas.update()
-            self.canvas.after(100)
-
-            # Verifica se é a célula final (linha de chegada)
-            if self.is_goal(cx, cy):
+            # Verifica se o agente chegou ao objetivo
+            if self.is_goal(state):
                 print("Linha de chegada alcançada!")
                 save_amostragem(self.amostragem)
                 return True
 
-            # Encontra vizinhos válidos
-            found_valid_move = False
-            for dx, dy in self.directions:
-                nx, ny = cx + dx, cy + dy
-                if self.is_valid(nx, ny):
-                    stack.append((nx, ny))  # Adiciona o vizinho à pilha
-                    found_valid_move = True
-                    break
+            # Marca o estado como visitado
+            if state in self.visited:
+                print(f"Repetiu a célula {state}. Finalizando execução.")
+                save_amostragem(self.amostragem)
+                return False
+            self.visited.add(state)
 
-            # Se nenhum vizinho válido foi encontrado, remove a célula atual da pilha
-            if not found_valid_move:
-                stack.pop()  # Beco sem saída, volta para a célula anterior
+            # Obtém as ações válidas a partir do estado atual
+            valid_actions = self.get_valid_actions(state)
 
+            if valid_actions:
+                # Escolhe a melhor ação com base na amostragem
+                action = self.choose_action(state, valid_actions)
+                next_state = (state[0] + action[0], state[1] + action[1])
+
+                # Move o agente graficamente
+                self.move_agent(state, next_state)
+
+                # Adiciona o próximo estado à pilha
+                stack.append(next_state)
+            else:
+                print(f"Beco sem saída na célula {state}. Registrando erro.")
+                self.register_error(state)
+                save_amostragem(self.amostragem)
+                stack.pop()
+
+        print("Caminho sem solução!")
+        save_amostragem(self.amostragem)
         return False
 
-    def is_goal(self, x, y):
+    def get_valid_actions(self, state):
         """
-        Verifica se a célula atual é a linha de chegada.
+        Retorna as ações válidas a partir do estado atual, considerando o labirinto e visitas.
         """
-        return (x, y) == (len(self.maze[0]) - 2, len(self.maze) - 2)  # Posição final padrão
+        return [
+            action for action in self.directions
+            if self.is_valid((state[0] + action[0], state[1] + action[1]))
+        ]
 
-    def is_valid(self, x, y):
+    def choose_action(self, state, valid_actions):
         """
-        Verifica se a célula é válida para exploração.
+        Escolhe a melhor ação com base na tabela amostragem.json.
         """
-        return (0 <= x < len(self.maze[0]) and 0 <= y < len(self.maze) and
-                self.maze[y][x] == 0 and (x, y) not in self.visited)
+        best_action = None
+        best_score = float("inf")  # Queremos o menor "peso" ou penalidade
+
+        for action in valid_actions:
+            next_state = (state[0] + action[0], state[1] + action[1])
+            score = self.amostragem["visited"].get(str(next_state), 0)  # Menor penalidade é melhor
+
+            # Penaliza células marcadas como becos sem saída
+            if str(next_state) in self.amostragem["errors"]:
+                score += 100  # Penalidade alta para erros
+
+            if score < best_score:
+                best_score = score
+                best_action = action
+
+        return best_action
+
+    def register_error(self, state):
+        """
+        Registra um beco sem saída na tabela amostragem.
+        """
+        state_key = str(state)
+        if state_key not in self.amostragem["errors"]:
+            self.amostragem["errors"].append(state_key)
+
+    def is_goal(self, state):
+        """
+        Verifica se o estado atual é a linha de chegada.
+        """
+        return state == (len(self.maze[0]) - 2, len(self.maze) - 2)
+
+    def is_valid(self, state):
+        """
+        Verifica se o estado é válido (não é parede e está dentro dos limites).
+        """
+        x, y = state
+        return (0 <= x < len(self.maze[0]) and
+                0 <= y < len(self.maze) and
+                self.maze[y][x] == 0 and
+                state not in self.visited and
+                str(state) not in self.amostragem["errors"])
+
+    def move_agent(self, current_state, next_state):
+        """
+        Move o agente graficamente de uma célula para outra.
+        """
+        cx, cy = current_state
+        nx, ny = next_state
+
+        # Apaga o agente na célula atual
+        if self.agent_visual:
+            self.canvas.delete(self.agent_visual)
+
+        # Desenha o agente na nova célula
+        self.agent_visual = self.canvas.create_rectangle(
+            nx * self.cell_size, ny * self.cell_size,
+            (nx + 1) * self.cell_size, (ny + 1) * self.cell_size,
+            fill="blue", outline="gray"
+        )
+        self.canvas.update()
+        self.canvas.after(100)

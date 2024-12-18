@@ -1,5 +1,4 @@
 import tkinter as tk
-from amostragem_utils import load_amostragem
 from learning_agent import LearningAgent
 
 class MazeApp:
@@ -9,7 +8,7 @@ class MazeApp:
         """
         self.root = root
         self.maze = maze
-        self.cell_size = 20
+        self.cell_size = 20  # Tamanho de cada célula
         self.canvas = tk.Canvas(
             root, 
             width=len(maze[0]) * self.cell_size, 
@@ -17,17 +16,19 @@ class MazeApp:
         )
         self.canvas.pack()
 
-        # Carrega a amostragem
-        self.amostragem = load_amostragem()
+        # Inicializa o agente DFS
+        self.agent = LearningAgent(
+            canvas=self.canvas,
+            cell_size=self.cell_size,
+            start=(1, 1),  # Posição inicial do agente
+            maze=self.maze
+        )
 
-        # Inicializa o agente
-        self.agent = LearningAgent(self.canvas, self.cell_size, (1, 1), maze, self.amostragem)
+        # Desenha o labirinto na interface gráfica
         self.draw_maze()
-        self.agent.draw()
 
-        # Inicia o DFS
-        if not self.agent.dfs():
-            print("Execução finalizada sem sucesso.")
+        # Inicia o movimento do agente
+        self.agent.dfs()
 
     def draw_maze(self):
         """
@@ -35,7 +36,7 @@ class MazeApp:
         """
         for y, row in enumerate(self.maze):
             for x, cell in enumerate(row):
-                color = "black" if cell == 1 else "white"
+                color = "black" if cell == 1 else "white"  # Preto para paredes, branco para caminhos
                 self.canvas.create_rectangle(
                     x * self.cell_size, y * self.cell_size,
                     (x + 1) * self.cell_size, (y + 1) * self.cell_size,

@@ -19,6 +19,7 @@ class LearningAgent:
         Implementa a lógica de DFS com aprendizado baseado na tabela amostragem.json.
         """
         stack = [self.start]  # Pilha para DFS
+        path = []
 
         while stack:
             state = stack[-1]  # Pega o estado atual no topo da pilha
@@ -30,11 +31,9 @@ class LearningAgent:
                 return True
 
             # Marca o estado como visitado
-            if state in self.visited:
-                print(f"Repetiu a célula {state}. Finalizando execução.")
-                save_amostragem(self.amostragem)
-                return False
-            self.visited.add(state)
+            if state not in self.visited:
+                self.visited.add(state)  # Adiciona à lista de visitados
+                path.append(state)  # Salva no caminho atual
 
             # Obtém as ações válidas a partir do estado atual
             valid_actions = self.get_valid_actions(state)
@@ -50,10 +49,15 @@ class LearningAgent:
                 # Adiciona o próximo estado à pilha
                 stack.append(next_state)
             else:
-                print(f"Beco sem saída na célula {state}. Registrando erro.")
+                print(f"Beco sem saída na célula {state}. Retornando para o estado anterior.")
                 self.register_error(state)
                 save_amostragem(self.amostragem)
                 stack.pop()
+                if stack:
+                    previous_state = stack[-1]
+                    # Anima o movimento de retorno
+                    self.move_agent(state, previous_state)
+
 
         print("Caminho sem solução!")
         save_amostragem(self.amostragem)

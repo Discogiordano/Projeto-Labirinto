@@ -29,6 +29,15 @@ O objetivo do agente é alcançar a linha de chegada do labirinto, utilizando o 
    ```bash
    pip install -r requirements.txt
 
-2. **Eexecutar o programa**:  
+   ```
+
+2. **Eexecutar o programa**:
    ```bash
    python main.py
+   ```
+
+---
+
+## 🏛 **Universidade Federal do Maranhão (UFMA)**
+
+Disciplina: **Inteligência Artificial**

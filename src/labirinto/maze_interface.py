@@ -1,5 +1,5 @@
 import tkinter as tk
-from learning_agent import LearningAgent
+from src.agente.learning_agent import LearningAgent
 
 class MazeApp:
     def __init__(self, root, maze):

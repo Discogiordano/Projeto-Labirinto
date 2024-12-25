@@ -1,4 +1,4 @@
-from amostragem_utils import save_amostragem, load_amostragem
+from src.agente.amostragem_utils import save_amostragem, load_amostragem
 
 class LearningAgent:
     def __init__(self, canvas, cell_size, start, maze):

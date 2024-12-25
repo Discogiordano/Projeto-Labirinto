@@ -1,6 +1,6 @@
-from maze_generator import generate_maze
-from maze_interface import MazeApp
-from labirinto_utils import load_labirinto, save_labirinto
+from src.labirinto.maze_generator import generate_maze
+from src.labirinto.maze_interface import MazeApp
+from src.labirinto.labirinto_utils import load_labirinto, save_labirinto
 import tkinter as tk
 
 def main():

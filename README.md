@@ -66,11 +66,11 @@ Agradecemos a todas as pessoas e instituições que contribuíram para a realiza
 
 ## Copyright / License
 
-Este material é resultado de um trabalho acadêmico para a disciplina **XXXXXXXXXXX**, sob a orientação do professor **Dr. THALES LEVI AZEVEDO VALENTE**, no semestre letivo **202X.X**, do curso de **Engenharia da Computação** na Universidade Federal do Maranhão (**UFMA**).
+Este material é resultado de um trabalho acadêmico para a disciplina **Inteligência Artificial**, sob a orientação do professor **Dr. THALES LEVI AZEVEDO VALENTE**, no semestre letivo **2024.2**, do curso de **Engenharia da Computação** na Universidade Federal do Maranhão (**UFMA**).
 
 Todo o material sob esta licença é **software livre**: pode ser usado para fins acadêmicos e comerciais **sem nenhum custo**. Não há papelada, nem royalties, nem restrições de “copyleft” do tipo GNU. Ele é licenciado sob os termos da **Licença MIT**, reproduzida abaixo, e, portanto, é compatível com a GPL e também se qualifica como software de código aberto. É de domínio público. O espírito desta licença é que você é livre para usar este material para qualquer finalidade, sem nenhum custo. O único requisito é que, se você usá-lo, nos dê crédito.
 
-Copyright © 202X Material Educacional
+Copyright © 2024 Material Educacional
 
 Este material está licenciado sob a Licença MIT. É permitido o uso, cópia, modificação, e distribuição deste material para qualquer fim, desde que acompanhado deste aviso de direitos autorais.
 
@@ -78,7 +78,7 @@ O MATERIAL É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU
 
 Para mais informações sobre a Licença MIT: https://opensource.org/licenses/MIT.
 
-Copyright © 202X Educational Material
+Copyright © 2024 Educational Material
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

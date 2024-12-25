@@ -81,7 +81,7 @@ class LearningAgent:
 
         for action in valid_actions:
             next_state = (state[0] + action[0], state[1] + action[1])
-            score = self.amostragem["visited"].get(str(next_state), 0)  # Menor penalidade é melhor
+            score = 0 
 
             # Penaliza células marcadas como becos sem saída
             if str(next_state) in self.amostragem["errors"]:

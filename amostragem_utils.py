@@ -9,7 +9,7 @@ def load_amostragem(file_path="amostragem.json"):
         with open(file_path, "r") as file:
             return json.load(file)
     except FileNotFoundError:
-        return {"visited": {}, "errors": []}
+        return { "errors": []}
 
 def save_amostragem(data, file_path="amostragem.json"):
     """

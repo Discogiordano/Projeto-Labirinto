@@ -21,7 +21,7 @@ O objetivo do agente é alcançar a linha de chegada do labirinto, utilizando o 
 - **`/src/`**: Código-fonte principal.
 - **`main.py`**: Arquivo principal.
 
-🔧 **Tecnologias Utilizadas**
+## 🔧 **Tecnologias Utilizadas**
 
 - **Python**: Linguagem de programação principal.
 - **Tkinter**: Biblioteca para a criação da interface gráfica do labirinto.
